@@ -49,7 +49,7 @@ function draw() {
 
   // 繪製圓
   fill(0, 255, 0);
-  noStroke();
+  noStroke(); // 確保圓沒有邊框
   circle(circleX, circleY, circleDiameter);
 
   // 確保至少有一隻手被偵測到
@@ -67,7 +67,7 @@ function draw() {
             fill(255, 255, 0);
           }
 
-          noStroke();
+          noStroke(); // 確保手部關鍵點沒有邊框
           circle(keypoint.x, keypoint.y, 16);
         }
 
