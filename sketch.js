@@ -41,15 +41,15 @@ function draw() {
   noStroke();
   circle(circleX, circleY, circleDiameter);
 
-  // Ensure at least one hand is detected
+  // 確保至少有一隻手被偵測到
   if (hands.length > 0) {
     for (let hand of hands) {
       if (hand.confidence > 0.1) {
-        // Loop through keypoints and draw circles
+        // 繪製手部關鍵點
         for (let i = 0; i < hand.keypoints.length; i++) {
           let keypoint = hand.keypoints[i];
 
-          // Color-code based on left or right hand
+          // 根據左右手設定顏色
           if (hand.handedness == "Left") {
             fill(255, 0, 255);
           } else {
@@ -60,57 +60,16 @@ function draw() {
           circle(keypoint.x, keypoint.y, 16);
         }
 
-        // 檢查食指（keypoint 8）是否碰觸圓
+        // 檢查食指（keypoint 8）和大拇指（keypoint 4）是否同時碰觸圓
         let indexFinger = hand.keypoints[8];
-        let d = dist(indexFinger.x, indexFinger.y, circleX, circleY);
-        if (d < circleDiameter / 2) {
-          // 如果碰觸到圓，讓圓跟隨食指移動
-          circleX = indexFinger.x;
-          circleY = indexFinger.y;
-        }
+        let thumb = hand.keypoints[4];
+        let dIndex = dist(indexFinger.x, indexFinger.y, circleX, circleY);
+        let dThumb = dist(thumb.x, thumb.y, circleX, circleY);
 
-        // Draw lines connecting keypoints
-        stroke(0); // Set line color
-        strokeWeight(2); // Set line thickness
-
-        // Connect keypoints 0 to 4
-        for (let i = 0; i < 4; i++) {
-          line(
-            hand.keypoints[i].x, hand.keypoints[i].y,
-            hand.keypoints[i + 1].x, hand.keypoints[i + 1].y
-          );
-        }
-
-        // Connect keypoints 5 to 8
-        for (let i = 5; i < 8; i++) {
-          line(
-            hand.keypoints[i].x, hand.keypoints[i].y,
-            hand.keypoints[i + 1].x, hand.keypoints[i + 1].y
-          );
-        }
-
-        // Connect keypoints 9 to 12
-        for (let i = 9; i < 12; i++) {
-          line(
-            hand.keypoints[i].x, hand.keypoints[i].y,
-            hand.keypoints[i + 1].x, hand.keypoints[i + 1].y
-          );
-        }
-
-        // Connect keypoints 13 to 16
-        for (let i = 13; i < 16; i++) {
-          line(
-            hand.keypoints[i].x, hand.keypoints[i].y,
-            hand.keypoints[i + 1].x, hand.keypoints[i + 1].y
-          );
-        }
-
-        // Connect keypoints 17 to 20
-        for (let i = 17; i < 20; i++) {
-          line(
-            hand.keypoints[i].x, hand.keypoints[i].y,
-            hand.keypoints[i + 1].x, hand.keypoints[i + 1].y
-          );
+        if (dIndex < circleDiameter / 2 && dThumb < circleDiameter / 2) {
+          // 如果食指和大拇指同時碰觸到圓，讓圓跟隨手指移動
+          circleX = (indexFinger.x + thumb.x) / 2; // 圓心移動到兩點的中間
+          circleY = (indexFinger.y + thumb.y) / 2;
         }
       }
     }
